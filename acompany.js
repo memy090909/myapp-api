@@ -1,23 +1,15 @@
-const db = require('./db');
-const helper = require('../helper');
-const config = require('../config');
+const express = require('express');
+const router = express.Router();
+const acompanyRouter = require('../services/acompany');
 
-async function getMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `SELECT EMP_ID, Name, Age, Tel, Email 
-    FROM employee LIMIT ?,?`, 
-    [offset, config.listPerPage]
-  );
-  const data = helper.emptyOrRows(rows);
-  const meta = {page};
-
-  return {
-    data,
-    meta
+/* GET programming languages. */
+router.get('/', async function(req, res, next) {
+  try {
+    res.json(await acompanyRouter.getMultiple(req.query.page));
+  } catch (err) {
+    console.error(`Error while getting programming languages `, err.message);
+    next(err);
   }
-}
+});
 
-module.exports = {
-  getMultiple
-}
+module.exports = router;
